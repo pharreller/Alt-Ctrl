@@ -5,23 +5,25 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     public float moveSpeed = 5.0f;
+    public float rotationSpeed = 100.0f;
     private Rigidbody2D rb;
-    private Vector2 movement;
         void Start()
         {
             rb = GetComponent<Rigidbody2D>();
         }
-    
+
         void Update()
         {
             float horizontalInput = Input.GetAxis("Horizontal");
             float verticalInput = Input.GetAxis("Vertical");
-    
-            movement = new Vector2(horizontalInput, verticalInput);
-            rb.velocity = movement.normalized * moveSpeed;
+
+            // Rotation
+            float rotation = -horizontalInput * rotationSpeed * Time.deltaTime;
+            transform.Rotate(0, 0, rotation);
+
+            // Déplacement
+            Vector2 movement = new Vector2(0, verticalInput);
+            Vector3 moveDirection = (Quaternion.Euler(0, 0, transform.rotation.eulerAngles.z) * movement).normalized;
+            rb.AddForce(moveDirection * moveSpeed);
         }
-        void FixedUpdate()
-            {
-                rb.velocity = movement.normalized * moveSpeed;
-            }
 }
